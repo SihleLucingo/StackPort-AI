@@ -1,0 +1,13 @@
+{
+  "name": "stackport-ai",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "backend",
+    "extension"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace @stackport/shared && npm run build --workspace @stackport/backend && npm run build --workspace @stackport/extension",
+    "test": "npm run test --workspace @stackport/backend"
+  }
+}

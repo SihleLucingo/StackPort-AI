@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["chrome-extension://REPLACE_WITH_EXTENSION_ID", "http://localhost:5173"],
+    "method": ["PUT", "GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Content-Length", "ETag"],
+    "maxAgeSeconds": 3600
+  }
+]

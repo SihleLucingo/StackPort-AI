@@ -1,0 +1,35 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/stackport/stackport-backend:$SHORT_SHA
+      - .
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/stackport/stackport-backend:$SHORT_SHA
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - stackport-backend
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/stackport/stackport-backend:$SHORT_SHA
+      - --region=$_REGION
+      - --platform=managed
+      - --memory=2Gi
+      - --timeout=900
+      - --concurrency=10
+      - --no-cpu-throttling
+      - --service-account=$_RUNTIME_SA
+      - --allow-unauthenticated
+      - --set-env-vars=NODE_ENV=production,GCS_BUCKET=$_BUCKET,CORS_ORIGIN=$_CORS_ORIGIN,GEMINI_PLANNER_MODEL=gemini-2.5-pro,GEMINI_CONVERTER_MODEL=gemini-2.5-flash
+      - --set-secrets=GEMINI_API_KEY=gemini-api-key:latest
+substitutions:
+  _REGION: us-central1
+  _BUCKET: stackport-projects
+  _CORS_ORIGIN: chrome-extension://REPLACE_WITH_EXTENSION_ID
+  _RUNTIME_SA: stackport-runtime@PROJECT_ID.iam.gserviceaccount.com
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/stackport/stackport-backend:$SHORT_SHA
